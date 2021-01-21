@@ -1,49 +1,22 @@
-// src/context/Provider.js
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import CarsContext from './CarsContext';
 
-class Provider extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cars: {
-        red: false,
-        blue: false,
-        yellow: false,
-      },
-    }
-    this.moveCar = this.moveCar.bind(this);
+export default function Provider({ children }) {
+  const initialState = {
+    red: false,
+    blue: false,
+    yellow: false,
   }
 
-  moveCar(car, side) {
-    this.setState({
-      cars: {
-        ...this.state.cars,
-        [car]: side,
-      },
-    });
+  const [cars, setCars] = useState(initialState);
+
+  const moveCar = ({ target: { id } }) => {
+    setCars({ ...cars, [id]: !cars[id]})
   };
 
-  render() {
-    const context = {
-      ...this.state,
-      moveCar: this.moveCar,
-    };
-
-    const { children } = this.props;
-
-    return (
-      <CarsContext.Provider value={context}>
-        {children}
-      </CarsContext.Provider>
-    );
-  }
+  return (
+    <CarsContext.Provider value={{ moveCar, cars }}>
+      {children}
+    </CarsContext.Provider>
+  );
 };
-
-Provider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-export default Provider;
